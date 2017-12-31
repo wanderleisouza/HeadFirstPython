@@ -16,4 +16,3 @@ for k in range(5):
         print("This minute seems a little odd.")
     else:
         print("Not an odd minute")
-
