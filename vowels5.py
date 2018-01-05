@@ -1,4 +1,4 @@
-vowels = ['a', 'e', 'i', 'o', 'u']
+vowels = {'a', 'e', 'i', 'o', 'u'}
 word = input("type a word:").lower()
 counter = {}
 
