@@ -1,7 +1,22 @@
 from flask import Flask, render_template, request, redirect
 import vsearch
+from pkg_resources import _ReqExtras
 
 app = Flask(__name__)
+
+FILE_NAME = 'vsearch.log'
+
+
+def log_request(req: 'flask_request', res: str) -> None:
+    with open(FILE_NAME, 'a') as log:
+        print(req.form, req.remote_addr, req.user_agent, res, file=log, sep='|')
+
+
+@app.route('/viewlog')
+def view_log() -> str:
+    with open(FILE_NAME) as log:
+        content = log.read()
+    return content, 200, {'Content-Type': 'text/css; charset=utf-8'}
 
 
 @app.route('/')
@@ -15,6 +30,7 @@ def do_search() -> 'html':
     letters = request.form['letters']
     title = 'Here are your results:'
     results = str(vsearch.search_for_letters(phrase, letters))
+    log_request(request, results)
     return render_template('results.html',
                            the_phrase=phrase,
                            the_title=title,
