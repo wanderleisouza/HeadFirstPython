@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, escape
+
 import vsearch
 from pkg_resources import _ReqExtras
 
@@ -13,10 +14,19 @@ def log_request(req: 'flask_request', res: str) -> None:
 
 
 @app.route('/viewlog')
-def view_log() -> str:
+def view_log() -> 'html':
+    contents = []
     with open(FILE_NAME) as log:
-        content = log.read()
-    return content, 200, {'Content-Type': 'text/css; charset=utf-8'}
+        for line in log:
+            contents.append([])
+            for item in line.split('|'):
+                contents[-1].append(escape(item))
+    titles = ('Form Data', 'Remote Addr', 'User Agent', 'Results')
+
+    return render_template('viewlog.html',
+                           the_title='View Log',
+                           the_row_titles=titles,
+                           the_data=contents,)
 
 
 @app.route('/')
